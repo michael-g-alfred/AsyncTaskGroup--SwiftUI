@@ -56,16 +56,47 @@
 //}
 //
 
-    // MARK: -  Improvement
+    // MARK: -  Improvement 01
+//import Foundation
+//
+//@Observable
+//@MainActor
+//final class DataViewModel {
+//    
+//    private let apiService = APIService()
+//    
+//    var users: [UserModel] = []
+//    var posts: [PostModel] = []
+//    
+//    func fetchData() async throws {
+//        
+//        async let usersTask = apiService.fetchUsers(
+//            url: "https://dummyjson.com/users"
+//        )
+//        
+//        async let postsTask = apiService.fetchPosts(
+//            url: "https://dummyjson.com/posts"
+//        )
+//        
+//        let (users, posts) = try await (usersTask, postsTask)
+//        
+//        self.users = users
+//        self.posts = posts
+//    }
+//}
+
+    // MARK: - Improvement 02
 import Foundation
 
 @Observable
-@MainActor
 final class DataViewModel {
     
     private let apiService = APIService()
     
+    @MainActor
     var users: [UserModel] = []
+    
+    @MainActor
     var posts: [PostModel] = []
     
     func fetchData() async throws {
@@ -80,7 +111,10 @@ final class DataViewModel {
         
         let (users, posts) = try await (usersTask, postsTask)
         
-        self.users = users
-        self.posts = posts
+        await MainActor.run {
+            self.users = users
+            self.posts = posts
+        }
     }
 }
+
